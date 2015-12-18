@@ -1,13 +1,4 @@
 <template>
-    <input type="text" @click="showCalendar" v-model="value" placeholder="请输入起始日期">
- <!--    <calendar_main 
-    :show.sync="show" 
-    :value.sync="value" 
-    :x.sync="x" 
-    :y.sync="y" 
-    :begin.sync="begin" 
-    :end.sync="end" >
-    </calendar_main> -->
     <div @click="none"  @touchstart="none" class="calendar" v-show="show" :style="{'left':x+'px','top':y+'px'}" transition="calendar" transition-mode="out-in">
         <div class="calendar-tools">
             <i class="fa fa-angle-left float left" @click="prev"  @touchstart="prev">＜</i>
@@ -62,7 +53,7 @@ module.exports = {
             type: String 
         }
     },
-    data: function() {
+    data:function(){
         return {
             year:0,
             month:0,
@@ -76,7 +67,7 @@ module.exports = {
         }
     },
     ready:function(){
-        var that = this;
+        var that=this;
         var now = new Date();
         if(that.value.indexOf("-")!=-1)that.sep="-";
         that.year = now.getFullYear();
@@ -85,21 +76,6 @@ module.exports = {
         that.render(that.year,that.month);
     },
     methods:{
-        showCalendar:function(e){
-            e.stopPropagation();
-            var that=this;
-            that.show=true;
-            that.x=e.target.offsetLeft;
-            that.y=e.target.offsetTop+e.target.offsetHeight+8;
-            var bindHide=function(e){
-                e.stopPropagation();
-                that.show=false;
-                document.removeEventListener('click',bindHide,false);
-            };
-            setTimeout(function(){
-                document.addEventListener('click',bindHide,false);
-            },500);
-        },
         render:function(y,m){
             var that=this;
             var d = new Date(),
@@ -220,9 +196,6 @@ module.exports = {
             e.stopPropagation();
         }
     },
-    // components:{
-    //     calendar_main: require('./calendar_main.vue')
-    // },
     attached: function() {
         // this.value = "2015-12-24";
         var now = new Date();
@@ -236,19 +209,14 @@ module.exports = {
             day = "0" + day;
         }
         var date = year + "-" + month + "-" + day;
-        // this.value = date;
-        if(!this.value) {
-            this.value = date;
-        }
+        this.value = date;
         console.log("attached", this.value);
     }
+
 }
 </script>
-
+ 
 <style>
-input {
-    width: 320px;
-}
 .calendar {
     width: 300px;
     padding: 10px;

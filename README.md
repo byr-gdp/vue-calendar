@@ -1,4 +1,11 @@
 # vue-calendar
->Calendar Components for Vue.js. QQ群: 240319632
 
-![](http://ww1.sinaimg.cn/large/823603acgw1ez1n57t8jug20d40acwjw.gif)
+## Todo
+
+* 优雅地实现外部引用组件
+* 自定义参数
+
+  1. 日期选择范围
+  2. 是否默认选中当前日期
+
+* 时间选择器
