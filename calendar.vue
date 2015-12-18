@@ -167,8 +167,6 @@ module.exports = {
                     parseInt(seletSplit[1])-1 === that.month
                     &&
                     parseInt(seletSplit[2]) === i
-                    &&
-                    (that.begin === "" && that.end === "")
                 ) {
                     temp[line].push({day:i, today:true});
                     that.today = [line, temp[line].length-1];
@@ -258,8 +256,7 @@ module.exports = {
         }
     },
     attached: function() {
-        // console.log("attached", this.value);
-        console.log("attached")
+        // TODO
     }
 }
 </script>
@@ -269,46 +266,47 @@ input {
     width: 320px;
 }
 .calendar {
-    width: 300px;
-    padding: 10px;
-    background: #fff;
-    position: absolute;
-    border: 1px solid #DEDEDE;
+    width:         300px;
+    padding:       10px;
+    background:    #fff;
+    position:      absolute;
+    border:        1px solid #DEDEDE;
     border-radius: 2px;
-    opacity:.95;
-    transition: all .5s ease;
+    opacity:       .95;
+    transition:    all .5s ease;
 }
  
 .calendar-enter, .calendar-leave {
-    opacity: 0;
+    opacity:   0;
     transform: translate3d(0,-10px, 0);
 }
 
 .calendar:before {
-    position: absolute;
-    left:30px;
-    top: -10px;
-    content: "";
-    border:5px solid rgba(0, 0, 0, 0);
+    position:            absolute;
+    left:                30px;
+    top:                 -10px;
+    content:             "";
+    border:              5px solid rgba(0, 0, 0, 0);
     border-bottom-color: #DEDEDE;
 }
 .calendar:after {
-    position: absolute;
-    left:30px;
-    top: -9px;
-    content: "";
-    border:5px solid rgba(0, 0, 0, 0);
+    position:            absolute;
+    left:                30px;
+    top:                 -9px;
+    content:             "";
+    border:              5px solid rgba(0, 0, 0, 0);
     border-bottom-color: #fff;
 }
 
 .calendar-tools{
-    height:32px;
-    font-size: 20px;
+    height:      32px;
+    font-size:   20px;
     line-height: 32px;
-    color:#5e7a88;
+    color:       #5e7a88;
 }
-.calendar-tools>i{
-    /*margin:           0 16px;*/
+
+.calendar-tools > i {
+    /*margin:         0 16px;*/
     line-height:      32px;
     cursor:           pointer;
     color:            #707070;
@@ -326,46 +324,52 @@ input {
     right: 16px;
 }
 
-.calendar-tools>i:hover{
+.calendar-tools > i:hover{
     color:#5e7a88;
 }
 
 .calendar-tools .text-center {
     text-align: center;
 }
+
 .calendar table {
-  clear: both;
-  width: 100%;
+  clear:           both;
+  width:           100%;
   border-collapse: collapse;
-  color: #444444;
+  color:           #444444;
 }
+
 .calendar td {
-  height: 40px;
-  width: 14.28571429%;
-  text-align: center;
+  height:         40px;
+  width:          14.28571429%;
+  text-align:     center;
   vertical-align: middle;
-  font-size:14px;
-  cursor: pointer;
-  border-radius: 2px;
+  font-size:      14px;
+  cursor:         pointer;
+  border-radius:  2px;
 }
+
 .calendar td:hover{
-    background:#f3f8fa;
+    background: #f3f8fa;
 }
+
 .calendar td.week{
-  pointer-events:none !important;
-  cursor: default !important;    
+  pointer-events: none !important;
+  cursor:         default !important;    
 }
+
 .calendar td.disabled {
-  color: #c0c0c0;
-  pointer-events:none !important;
-  cursor: default !important;
+  color:          #c0c0c0;
+  pointer-events: none !important;
+  cursor:         default !important;
 }
-.calendar td.today {
-    
+
+.calendar td.today {    
   background-color: #5e7a88;
-  color: #fff;
-  font-size:16px;
+  color:            #fff;
+  font-size:        16px;
 }
+
 .calendar thead td {
   text-transform: uppercase;
 }
