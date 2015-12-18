@@ -6,16 +6,23 @@
 </head>
 <body>
   <div id="app">
-   <!--  <calendar :show.sync="show" 
-    :value.sync="2015-12-11" 
-    :x.sync="x" 
-    :y.sync="y" 
-    :begin.sync="begin" 
-    :end.sync="end"></calendar> -->
     <calendar
-      value="2015-12-18"
+      value="today"
       begin="2015-12-02" 
-      end="2015-12-15"></calendar>
+      end="2015-12-15">
+    </calendar>
+
+   <!--  <calendar
+      value="2015-11-30"
+      begin="2015-12-02" 
+      end="2015-12-20">
+    </calendar>
+
+    <calendar
+      value="null"
+      begin="2015-12-01"
+      end="2015-12-31">
+    </calendar> -->
   </div>
   <script src="./build/bundle.js"></script>
 </body>

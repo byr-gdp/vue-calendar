@@ -1,13 +1,5 @@
 <template>
     <input type="text" @click="showCalendar" v-model="value" placeholder="请输入起始日期">
- <!--    <calendar_main 
-    :show.sync="show" 
-    :value.sync="value" 
-    :x.sync="x" 
-    :y.sync="y" 
-    :begin.sync="begin" 
-    :end.sync="end" >
-    </calendar_main> -->
     <div @click="none"  @touchstart="none" class="calendar" v-show="show" :style="{'left':x+'px','top':y+'px'}" transition="calendar" transition-mode="out-in">
         <div class="calendar-tools">
             <i class="fa fa-angle-left float left" @click="prev"  @touchstart="prev">＜</i>
@@ -70,19 +62,40 @@ module.exports = {
             days:[],
             today:[],
             current:'',
-            sep:"/",
+            sep:"-",
             weeks:['日', '一', '二', '三', '四', '五', '六'],
             months:['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
         }
     },
     ready:function(){
-        var that = this;
         var now = new Date();
-        if(that.value.indexOf("-")!=-1)that.sep="-";
-        that.year = now.getFullYear();
-        that.month = now.getMonth();
-        that.day = now.getDate();
-        that.render(that.year,that.month);
+        // 判断日期格式？ 2015-12-18 || 2015/12/18
+        // if(this.value.indexOf("-")!=-1)
+            // this.sep="-";
+        this.year = now.getFullYear();
+        this.month = now.getMonth();
+        this.day = now.getDate();
+
+        var year = this.year;
+        var month = now.getMonth() + 1;
+        var day = now.getDate();
+
+        if(month < 10) {
+            month = "0" + month;
+        }
+        if(day < 10) {
+            day = "0" + day;
+        }
+        var date = year + "-" + month + "-" + day;
+        if(this.value === "today") {
+            this.value = date;
+        }
+        if(this.value === "null") {
+            this.value = null
+        }
+
+        this.render(this.year, this.month);
+        // console.log("ready")
     },
     methods:{
         showCalendar:function(e){
@@ -100,79 +113,103 @@ module.exports = {
                 document.addEventListener('click',bindHide,false);
             },500);
         },
-        render:function(y,m){
-            var that=this;
-            var d = new Date(),
-            firstDayOfMonth = new Date(y, m, 1).getDay(),//当月第一天
-            lastDateOfMonth = new Date(y, m + 1, 0).getDate(),//当月最后一天
-            lastDayOfLastMonth = m == 0 ? new Date(y - 1, 11, 0).getDate() : new Date(y, m, 0).getDate();//最后一月的最后一天
-            that.current=y + ' / ' + that.months[m];
+        render:function(y, m){
+            var that            = this;
+            var d               = new Date();
+            var firstDayOfMonth = new Date(y, m, 1).getDay();        //当月第一天星期几
+            var lastDateOfMonth = new Date(y, m + 1, 0).getDate();   //当月最后一天日期
+            
+            // 上月最后一天计算有误
+            // var lastDayOfLastMonth  = m == 0 ? new Date(y, m, 0).getDate() : new Date(y, m, 0).getDate();//最后一月的最后一天
+            var lastDayOfLastMonth = new Date(y, m, 0).getDate();
+            var seletSplit = [];
 
+            that.current = y + ' / ' + that.months[m];
 
-            var seletSplit=that.value.split(that.sep);
+            // 若 value == null，此处 split 报错。
+            if(that.value) {
+                console.log("if");
+                seletSplit = that.value.split(that.sep);
+            } else {
+                console.log("else");
+                seletSplit.push(y, m, 1);
+            }
             var i,line=0,temp=[];
-            for(i=1;i <= lastDateOfMonth;i++) {
+
+            // 遍历当月每一天
+            for(i = 1; i <= lastDateOfMonth; i++) {
+                // dow 表示当天是星期几
                 var dow = new Date(y, m, i).getDay();
-                // 第一行
-                if (dow == 0) {
+                // 若是星期天，另起一行，第一个，清空该行数据
+                if(dow == 0) {
                     temp[line]=[];
-                }else if (i == 1) {
+                } else if(i == 1) {
+                    // 若是当月第一天，也需要清空该行数据
                     temp[line]=[];
 
+                    // 当月第一周需要处理上月的部分天数
                     var k = lastDayOfLastMonth - firstDayOfMonth + 1;
-                    for (var j = 0; j < firstDayOfMonth; j++) {
-                        temp[line].push({day:k,disabled:true});
+                    // 当月日期前几天属于上月，需disabled
+                    for(var j = 0; j < firstDayOfMonth; j++) {
+                        temp[line].push({day: k, disabled: true});
                         k++;
                     }
                 }
+
                 // 当月渲染
-                var chk = new Date();
+                var chk  = new Date();
                 var chkY = chk.getFullYear();
                 var chkM = chk.getMonth();
                 // 选中当前input日期
-                if(
-                    parseInt(seletSplit[0])==that.year 
+                if (
+                    parseInt(seletSplit[0]) === that.year 
                     &&
-                    parseInt(seletSplit[1])-1==that.month
+                    parseInt(seletSplit[1])-1 === that.month
                     &&
-                    parseInt(seletSplit[2])==i
+                    parseInt(seletSplit[2]) === i
                     &&
-                    (that.begin==""&&that.end=="")
-                ){
-                    temp[line].push({day:i,today:true});
-                    that.today=[line,temp[line].length-1];
+                    (that.begin === "" && that.end === "")
+                ) {
+                    temp[line].push({day:i, today:true});
+                    that.today = [line, temp[line].length-1];
                 // 当天
-                }else if (chkY == that.year && chkM == that.month && i == that.day&&that.value=="") {
-                    temp[line].push({day:i,today:true});
-                    that.today=[line,temp[line].length-1];
+                } else if (chkY == that.year && chkM == that.month && i == that.day && that.value == "") {
+                    temp[line].push({day: i, today: true});
+                    that.today=[line, temp[line].length-1];
                 } else {//默认
                     // 1.判断begin和end的日期
-                    var options={day:i,today:false};
-                    if(that.begin!=""){
-                        var beginSplit=that.begin.split(that.sep);
-                        var beginDate=new Date(parseInt(beginSplit[0]),parseInt(beginSplit[1])-1,parseInt(beginSplit[2]));
-                        var beginTime=Number(beginDate);
-                        var thisDate=new Date(that.year,that.month,i);
-                        var thisTime=Number(thisDate);
-                        if(beginTime>thisTime)options.disabled=true;
+                    var options = {day: i, today: false};
+                    if(that.begin != ""){
+                        var beginSplit = that.begin.split(that.sep);
+                        var beginDate  = new Date(parseInt(beginSplit[0]),parseInt(beginSplit[1])-1,parseInt(beginSplit[2]));
+                        var beginTime  = Number(beginDate);
+                        var thisDate   = new Date(that.year, that.month, i);
+                        var thisTime   = Number(thisDate);
+
+                        if(beginTime > thisTime) {
+                            options.disabled=true;
+                        }
                     }
-                    if(that.end!=""){
-                        var endSplit=that.end.split(that.sep);
-                        var endDate=new Date(parseInt(endSplit[0]),parseInt(endSplit[1])-1,parseInt(endSplit[2]));
-                        var endTime=Number(endDate);
-                        var thisDate=new Date(that.year,that.month,i);
-                        var thisTime=Number(thisDate);
-                        if(endTime<thisTime)options.disabled=true;
+                    if(that.end != ""){
+                        var endSplit = that.end.split(that.sep);
+                        var endDate  = new Date(parseInt(endSplit[0]),parseInt(endSplit[1])-1,parseInt(endSplit[2]));
+                        var endTime  = Number(endDate);
+                        var thisDate = new Date(that.year,that.month,i);
+                        var thisTime = Number(thisDate);
+
+                        if(endTime < thisTime) {
+                            options.disabled = true;
+                        }
                     }
                     temp[line].push(options);
                 }
-                // 最后一行
+                // 一行最后一个，即星期六
                 if (dow == 6) {
                     line++;
-                }else if (i == lastDateOfMonth) {
+                } else if (i == lastDateOfMonth) {
                     var k = 1;
                     for (dow; dow < 6; dow++) {
-                        temp[line].push({day:k,disabled:true});
+                        temp[line].push({day: k, disabled: true});
                         k++;
                     }
                 }
@@ -220,27 +257,9 @@ module.exports = {
             e.stopPropagation();
         }
     },
-    // components:{
-    //     calendar_main: require('./calendar_main.vue')
-    // },
     attached: function() {
-        // this.value = "2015-12-24";
-        var now = new Date();
-        var year = now.getFullYear();
-        var month = now.getMonth() + 1;
-        var day = now.getDate();
-        if(month < 10) {
-            month = "0" + month;
-        }
-        if(day < 10) {
-            day = "0" + day;
-        }
-        var date = year + "-" + month + "-" + day;
-        // this.value = date;
-        if(!this.value) {
-            this.value = date;
-        }
-        console.log("attached", this.value);
+        // console.log("attached", this.value);
+        console.log("attached")
     }
 }
 </script>
